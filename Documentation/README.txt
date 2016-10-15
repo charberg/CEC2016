@@ -10,7 +10,7 @@
 ||Charles Bergeron
 ||Christopher Briglio
 ||David Briglio
-||Daniel Sauve
+||Daniel Sauvé
 =================================
 
 If you are looking for the user manual explaining how to install and operate the program, please refer to "User Manual.pdf".
