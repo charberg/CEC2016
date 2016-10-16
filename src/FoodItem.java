@@ -5,10 +5,10 @@ public class FoodItem {
 
 	String name;
 	Date expiryDate;
-	int stock;
-	int batchNumber;
-	int restockLimit;
-	int popularity;
+	Integer stock;
+	Integer batchNumber;
+	Integer restockLimit;
+	Integer popularity;
 	
 	public FoodItem(String name, Date expiryDate, int stock, int batchNumber, int restockLimit, int popularity) {
 		this.name = name;
@@ -16,7 +16,7 @@ public class FoodItem {
 		this.stock = stock;
 		this.batchNumber = batchNumber;
 		this.restockLimit = restockLimit;
-		this. popularity = popularity;
+		this.popularity = popularity;
 	}
 	
 	public int getBatchNumber() {

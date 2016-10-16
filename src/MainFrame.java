@@ -5,15 +5,22 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class MainFrame extends JFrame {
 	
 	private JPanel stockPanel;
 	private JPanel contentPane;
 	private JTable stockTable;
+	private JCheckBox expiryViewCheck;
 	private JComboBox<String> sortByCombo;
 	private DefaultTableModel stockTableModel;
-
+	private ArrayList<FoodItem> inventory;
+	
+	private static String[] columnHeadersNoExp = new String[]{"Name", "Stock", "Popularity"};
+	private static String[] columnHeadersExp = new String[]{"Name", "Stock", "Popularity", "Expiry"};
+	
 	/**
 	 * Launch the application.
 	 */
@@ -81,7 +88,13 @@ public class MainFrame extends JFrame {
 		gbl_sotckSidePanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		sotckSidePanel.setLayout(gbl_sotckSidePanel);
 		
-		JCheckBox expiryViewCheck = new JCheckBox("Expiry View");
+		expiryViewCheck = new JCheckBox("Expiry View");
+		expiryViewCheck.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				UpdateStock();
+			}
+		});
 		GridBagConstraints gbc_expiryViewCheck = new GridBagConstraints();
 		gbc_expiryViewCheck.anchor = GridBagConstraints.NORTHWEST;
 		gbc_expiryViewCheck.insets = new Insets(0, 0, 5, 0);
@@ -89,7 +102,7 @@ public class MainFrame extends JFrame {
 		gbc_expiryViewCheck.gridy = 0;
 		sotckSidePanel.add(expiryViewCheck, gbc_expiryViewCheck);
 		
-		JButton setLimitButton = new JButton("Set Limit");
+		JButton setLimitButton = new JButton("Set Restock Limit");
 		GridBagConstraints gbc_setLimitButton = new GridBagConstraints();
 		gbc_setLimitButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_setLimitButton.insets = new Insets(0, 0, 5, 0);
@@ -115,24 +128,10 @@ public class MainFrame extends JFrame {
 		gbc_sortByCombo.gridy = 3;
 		sotckSidePanel.add(sortByCombo, gbc_sortByCombo);
 		
-		JButton btnTest = new JButton("Test");
-		btnTest.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("Test button clicked");
-				UpdateStock();
-			}
-		});
-		GridBagConstraints gbc_btnTest = new GridBagConstraints();
-		gbc_btnTest.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnTest.gridx = 0;
-		gbc_btnTest.gridy = 4;
-		sotckSidePanel.add(btnTest, gbc_btnTest);
+		inventory = new ArrayList<FoodItem>();
+		inventory.add(new FoodItem("testy", new Date(), 0, 0, 0, 0));
 		
-		stockTableModel = new DefaultTableModel();
-		stockTableModel.addColumn("Name");
-		stockTableModel.addRow(new Object[]{"test"});
-		
+		stockTableModel = new DefaultTableModel(columnHeadersNoExp, 0);
 		stockTable = new JTable(stockTableModel);
 		JScrollPane stockScrollPanel = new JScrollPane(stockTable);
 		stockPanel.add(stockScrollPanel, BorderLayout.CENTER);
@@ -148,13 +147,40 @@ public class MainFrame extends JFrame {
 	 */
 	public void UpdateStock()
 	{
-		//Combo Box
-		sortByCombo.removeAllItems();
-		sortByCombo.addItem("Test");
-		
 		//Table
 		stockTableModel.setColumnCount(0);
-		stockTableModel.addColumn("UPDATE TEST");
+		String[] columns = columnHeadersExp;
+		boolean exp = expiryViewCheck.isSelected();
+		if(exp) {
+			//Activate column
+			stockTableModel.setColumnCount(0);
+		} 
+		else {
+			//Deactivate column
+			stockTableModel.setColumnCount(0);
+			columns = columnHeadersNoExp;
+		}
+		stockTableModel.setColumnIdentifiers(columns);
+		
+		stockTableModel.setRowCount(0);
+		
+		for(int i = 0; i < inventory.size(); i++) {
+			if(exp)
+			{
+				stockTableModel.addRow(new String[]{inventory.get(i).name, inventory.get(i).popularity.toString(), inventory.get(i).stock.toString(), inventory.get(i).expiryDate.toString()});
+			}
+			else
+			{
+				stockTableModel.addRow(new String[]{inventory.get(i).name, inventory.get(i).popularity.toString(), inventory.get(i).stock.toString()});
+			}
+		}
+		
+		//Combo Box
+		sortByCombo.removeAllItems();
+		
+		for(int i = 0; i < columns.length; i++) {
+			sortByCombo.addItem(columns[i]);
+		}
 		
 		System.out.println("update stock called");
 	}
