@@ -22,7 +22,7 @@ public class MainFrameListener implements ActionListener{
 			case "expiryview":
 				frame.UpdateStock();
 				break;
-			case "openfile":
+			case "openfoodfile":
 				JFileChooser fc = new JFileChooser();
 				int result = fc.showOpenDialog(frame);
 				if(result != -1)
@@ -30,7 +30,16 @@ public class MainFrameListener implements ActionListener{
 					String file = fc.getSelectedFile().getAbsolutePath();
 					SQLiteJDBC.bulkInsert(DocParser.parseFoodListDocx(file));
 					frame.UpdateStock();
-					System.out.println("got file");
+				}
+				break;
+			case "openemployeefile":
+				JFileChooser fc2 = new JFileChooser();
+				int result2 = fc2.showOpenDialog(frame);
+				if(result2 != -1)
+				{
+					String file = fc2.getSelectedFile().getAbsolutePath();
+					SQLiteJDBC.bulkInsertEmployees(DocParser.parseEmployeeListDocx(file));
+					frame.setEmployeeTables();
 				}
 				break;
 			case "setrestock":

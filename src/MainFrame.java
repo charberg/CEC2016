@@ -14,12 +14,17 @@ public class MainFrame extends JFrame {
 	private JCheckBox expiryViewCheck;
 	private JComboBox<String> sortByCombo;
 	private DefaultTableModel stockTableModel;
+	private DefaultTableModel workerTableModel;
+	private DefaultTableModel workerScheduleTableModel;
 	private ArrayList<FoodItem> inventoryNoStock;
 	private ArrayList<FoodStock> inventoryStock;
 	private MainFrameListener listener;
+	private ArrayList<Employee> workerList;
 	
 	private static String[] columnHeadersNoExp = new String[]{"Name", "Stock", "Popularity", "Restock Limit"};
 	private static String[] columnHeadersExp = new String[]{"Name", "Stock", "Popularity", "Restock Limit", "Batch", "Expiry"};
+	private JTable workerTable;
+	private JTable workerScheduleTable;
 	
 	/**
 	 * Launch the application.
@@ -59,9 +64,14 @@ public class MainFrame extends JFrame {
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmOpen = new JMenuItem("Open Food File");
-		mntmOpen.setActionCommand("openfile");
+		mntmOpen.setActionCommand("openfoodfile");
 		mntmOpen.addActionListener(listener);
 		mnFile.add(mntmOpen);
+		
+		JMenuItem mntmOpenEmployeeFile = new JMenuItem("Open Employee File");
+		mntmOpenEmployeeFile.setActionCommand("openemployeefile");
+		mntmOpenEmployeeFile.addActionListener(listener);
+		mnFile.add(mntmOpenEmployeeFile);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -134,6 +144,23 @@ public class MainFrame extends JFrame {
 		JPanel workerPanel = new JPanel();
 		workerPanel.setBackground(Color.WHITE);
 		tabbedPane.addTab("Employee", null, workerPanel, null);
+		workerPanel.setLayout(new BorderLayout(0, 0));
+		
+		workerTableModel = new DefaultTableModel(new String[]{"Employee ID", "Name"}, 0);
+		workerTable = new JTable(workerTableModel);
+		JScrollPane workerScrollPanel = new JScrollPane(workerTable);
+		workerPanel.add(workerScrollPanel, BorderLayout.CENTER);
+		
+		workerScheduleTableModel = new DefaultTableModel(new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}, 0);
+		JPanel workerSchedulePanel = new JPanel();
+		tabbedPane.addTab("Schedule", null, workerSchedulePanel, null);
+		workerSchedulePanel.setLayout(new BorderLayout(0, 0));
+		
+		JScrollPane workerScheduleScrollPanel = new JScrollPane();
+		workerSchedulePanel.add(workerScheduleScrollPanel, BorderLayout.CENTER);	
+		
+		workerScheduleTable = new JTable(workerScheduleTableModel);
+		workerScheduleScrollPanel.setViewportView(workerScheduleTable);
 	}
 	
 	/**
@@ -170,6 +197,67 @@ public class MainFrame extends JFrame {
 		}
 	}
 
+	public void setEmployeeTables()
+	{
+		workerList = SQLiteJDBC.selectEmployees();
+		
+		//Worker list
+		for(int i = 0; i < workerList.size(); i++)
+		{
+			workerTableModel.addRow(new String[]{workerList.get(i).employeeId.toString(), workerList.get(i).name});
+		}
+		
+		//Schedule
+		String[][] schedule = ScheduleGenerator.generateSchedule(workerList);
+		
+		for(int i = 0; i < 6; i++)
+		{
+			workerScheduleTableModel.addRow(new String[]{"8:30-9:30", schedule[i][0]});
+		}
+		
+		for(int i = 0; i < 6; i++)
+		{
+			workerScheduleTableModel.addRow(new String[]{"9:30-10:30",schedule[i][1]});
+		}
+		
+		for(int i = 0; i < 6; i++)
+		{
+			workerScheduleTableModel.addRow(new String[]{"10:30-11:30",schedule[i][2]});
+		}
+		
+		for(int i = 0; i < 6; i++)
+		{
+			workerScheduleTableModel.addRow(new String[]{"11:30-12:30",schedule[i][3]});
+		}
+		
+		for(int i = 0; i < 6; i++)
+		{
+			workerScheduleTableModel.addRow(new String[]{"12:30-1:30",schedule[i][4]});
+		}
+		
+		for(int i = 0; i < 6; i++)
+		{
+			workerScheduleTableModel.addRow(new String[]{"1:30-2:30",schedule[i][5]});
+		}
+		
+		for(int i = 0; i < 6; i++)
+		{
+			workerScheduleTableModel.addRow(new String[]{"3:30-4:30",schedule[i][6]});
+		}
+		
+		for(int i = 0; i < 6; i++)
+		{
+			workerScheduleTableModel.addRow(new String[]{"5:30-6:30",schedule[i][7]});
+		}
+		
+		for(int i = 0; i < 6; i++)
+		{
+			workerScheduleTableModel.addRow(new String[]{"7:30-8:30",schedule[i][8]});
+		}
+		
+		//TODO: Add overnights
+	}
+	
 	public void setRestock(String value)
 	{
 		int selectedIndex = stockTable.getSelectedRow();
