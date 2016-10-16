@@ -53,7 +53,7 @@ public final class SQLiteJDBC
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:leos.db");
-            c.setAutoCommit(true);
+            c.setAutoCommit(false);
             PreparedStatement foodItemStatement;
             PreparedStatement foodStockStatement;
             foodItemStatement = c.prepareStatement("INSERT INTO food_items(name, restock_limit, popularity)  " +
@@ -73,6 +73,7 @@ public final class SQLiteJDBC
             }
             foodItemStatement.close();
             foodStockStatement.close();
+            c.commit();
             c.close();
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
