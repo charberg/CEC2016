@@ -160,7 +160,7 @@ public final class SQLiteJDBC
                     "FROM food_stock INNER JOIN food_items ON food_stock.name = food_items.name");
             ResultSet rs = s.executeQuery();
             while(rs.next()){
-                foodStocks.add(new FoodStock(rs.getString(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getInt(6)));
+                foodStocks.add(new FoodStock(rs.getString(1), rs.getTimestamp(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getInt(6)));
             }
             s.close();
             c.close();
@@ -219,9 +219,9 @@ public final class SQLiteJDBC
                     "FROM employees");
             ResultSet rs = s.executeQuery();
             while(rs.next()){
-                employees.add(new Employee(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getDate(4), rs.getDate(5), rs.getDate(6)
-                        , rs.getDate(7), rs.getDate(8), rs.getDate(9), rs.getDate(10), rs.getDate(11), rs.getDate(12), rs.getDate(13),
-                        rs.getDate(14), rs.getBoolean(15)));
+                employees.add(new Employee(rs.getInt(1), rs.getString(2), rs.getTimestamp(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getTimestamp(6)
+                        , rs.getTimestamp(7), rs.getTimestamp(8), rs.getTimestamp(9), rs.getTimestamp(10), rs.getTimestamp(11), rs.getTimestamp(12), rs.getTimestamp(13),
+                        rs.getTimestamp(14), rs.getBoolean(15)));
             }
             s.close();
             c.close();
@@ -266,6 +266,52 @@ public final class SQLiteJDBC
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
             System.exit(0);
         }
+    }
+
+    public static String foodItemsToCSV(){
+        Connection c = null;
+        StringBuilder csv = new StringBuilder();
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("SELECT name, restock_limit, popularity FROM food_items");
+            ResultSet rs = s.executeQuery();
+            while(rs.next()){
+                csv.append(rs.getString(1)).append(',').append(rs.getInt(2)).append(',').append(rs.getInt(3)).append('\n');
+            }
+            s.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+
+        return csv.toString();
+    }
+
+    public static String foodStockToCSV(){
+        Connection c = null;
+        StringBuilder csv = new StringBuilder();
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("SELECT name, batch_number, stock, exp FROM food_stock");
+            ResultSet rs = s.executeQuery();
+            while(rs.next()){
+                csv.append(rs.getString(1)).append(',').append(rs.getInt(2)).append(',').append(rs.getInt(3)).append(',').append(rs.getInt(4)).append('\n');
+            }
+            s.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+
+        return csv.toString();
     }
 
     private static java.sql.Timestamp toSQLDate(java.util.Date d){

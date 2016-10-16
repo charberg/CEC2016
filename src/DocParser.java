@@ -34,7 +34,7 @@ public class DocParser {
         }
 		
 		ArrayList<FoodStock> items = new ArrayList<FoodStock>();
-		
+		Integer batchNumber = (int) (Math.random() * 9000) + 1000;
 		for(String line : lines) {
 			
 			String[] lineItems = line.split("\\t+");
@@ -48,7 +48,7 @@ public class DocParser {
 			}
 
 			try {
-			items.add(new FoodStock(lineItems[0], date, Integer.parseInt(lineItems[2].replaceAll("\\s+", "")), (int) (Math.random() * 9000) + 1000, 0, 0));
+			items.add(new FoodStock(lineItems[0], date, Integer.parseInt(lineItems[2].replaceAll("\\s+", "")), batchNumber, 0, 0));
 			}
 			catch (Exception e) {
 				System.out.println("Problem parsing line: " + line);
