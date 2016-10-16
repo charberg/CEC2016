@@ -3,8 +3,8 @@ import java.util.Date;
 
 public class FoodStock extends FoodItem{
 
-	Date expiryDate;
-	Integer batchNumber;
+	private Date expiryDate;
+	private Integer batchNumber;
 	
 	public FoodStock(String name, Date expiryDate, int stock, int batchNumber, int restockLimit, int popularity) {
 		super(name, restockLimit, popularity, stock);
@@ -28,7 +28,7 @@ public class FoodStock extends FoodItem{
 		this.expiryDate = expiryDate;
 	}
 	
-	public int getStock() {
+	public Integer getStock() {
 		return stock;
 	}
 

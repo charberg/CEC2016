@@ -1,10 +1,10 @@
 
 public class FoodItem {
 
-	String name;
-	Integer restockLimit;
-	Integer popularity;
-	Integer stock;
+	protected String name;
+	protected Integer restockLimit;
+	protected Integer popularity;
+	protected Integer stock;
 	
 	public FoodItem(String name, int restockLimit, int popularity, int stock) {
 		this.name = name;
@@ -35,6 +35,16 @@ public class FoodItem {
 
 	public void setPopularity(Integer limit) {
 		this.popularity = limit;
+	}
+	
+	public void setStock(Integer stock)
+	{
+		this.stock = stock;
+	}
+	
+	public Integer getStock()
+	{
+		return stock;
 	}
 	
 }
