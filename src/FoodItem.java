@@ -7,12 +7,16 @@ public class FoodItem {
 	Date expiryDate;
 	int stock;
 	int batchNumber;
+	int restockLimit;
+	int popularity;
 	
-	public FoodItem(String name, Date expiryDate, int stock, int batchNumber) {
+	public FoodItem(String name, Date expiryDate, int stock, int batchNumber, int restockLimit, int popularity) {
 		this.name = name;
 		this.expiryDate = expiryDate;
 		this.stock = stock;
 		this.batchNumber = batchNumber;
+		this.restockLimit = restockLimit;
+		this. popularity = popularity;
 	}
 	
 	public int getBatchNumber() {
