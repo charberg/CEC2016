@@ -4,11 +4,13 @@ public class FoodItem {
 	String name;
 	Integer restockLimit;
 	Integer popularity;
+	Integer stock;
 	
-	public FoodItem(String name, int restockLimit, int popularity) {
+	public FoodItem(String name, int restockLimit, int popularity, int stock) {
 		this.name = name;
 		this.restockLimit = restockLimit;
 		this.popularity = popularity;
+		this.stock = stock;
 	}
 
 	public String getName() {

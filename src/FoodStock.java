@@ -5,13 +5,11 @@ public class FoodStock extends FoodItem{
 
 	Date expiryDate;
 	Integer batchNumber;
-	Integer stock;
 	
 	public FoodStock(String name, Date expiryDate, int stock, int batchNumber, int restockLimit, int popularity) {
-		super(name, restockLimit, popularity);
+		super(name, restockLimit, popularity, stock);
 		this.expiryDate = expiryDate;
 		this.batchNumber = batchNumber;
-		this.stock = stock;
 	}
 	
 	public int getBatchNumber() {
