@@ -12,7 +12,7 @@ public class FoodStock extends FoodItem{
 		this.batchNumber = batchNumber;
 	}
 	
-	public int getBatchNumber() {
+	public Integer getBatchNumber() {
 		return batchNumber;
 	}
 	

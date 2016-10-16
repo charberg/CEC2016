@@ -19,8 +19,8 @@ public class MainFrame extends JFrame {
 	private ArrayList<FoodItem> inventoryNoStock;
 	private ArrayList<FoodStock> inventoryStock;
 	
-	private static String[] columnHeadersNoExp = new String[]{"Name", "Stock", "Popularity"};
-	private static String[] columnHeadersExp = new String[]{"Name", "Stock", "Popularity", "Expiry"};
+	private static String[] columnHeadersNoExp = new String[]{"Name", "Stock", "Popularity", "Restock Limit"};
+	private static String[] columnHeadersExp = new String[]{"Name", "Stock", "Popularity", "Restock Limit", "Batch", "Expiry"};
 	
 	/**
 	 * Launch the application.
@@ -129,13 +129,15 @@ public class MainFrame extends JFrame {
 		gbc_sortByCombo.gridy = 3;
 		sotckSidePanel.add(sortByCombo, gbc_sortByCombo);
 		
-		inventoryStock = new ArrayList<FoodStock>();
+		inventoryStock = SQLiteJDBC.selectFoodStock();
+		inventoryNoStock = SQLiteJDBC.selectFoodItem();
 		
 		stockTableModel = new DefaultTableModel(columnHeadersNoExp, 0);
 		stockTable = new JTable(stockTableModel);
 		JScrollPane stockScrollPanel = new JScrollPane(stockTable);
 		stockPanel.add(stockScrollPanel, BorderLayout.CENTER);
 		
+		UpdateStock();
 		
 		JPanel workerPanel = new JPanel();
 		workerPanel.setBackground(Color.WHITE);
@@ -149,39 +151,38 @@ public class MainFrame extends JFrame {
 	{
 		//Table
 		stockTableModel.setColumnCount(0);
+		stockTableModel.setRowCount(0);
 		String[] columns = columnHeadersExp;
-		boolean exp = expiryViewCheck.isSelected();
-		if(exp) {
-			//Activate column
-			stockTableModel.setColumnCount(0);
+		if(expiryViewCheck.isSelected()) {
+			UpdateStockExp();
 		} 
 		else {
-			//Deactivate column
-			stockTableModel.setColumnCount(0);
+			UpdateStockNoExp();
 			columns = columnHeadersNoExp;
 		}
-		stockTableModel.setColumnIdentifiers(columns);
-		
-		stockTableModel.setRowCount(0);
-		/*
-		for(int i = 0; i < inventoryStock.size(); i++) {
-			if(exp)
-			{
-				stockTableModel.addRow(new String[]{inventoryStock.get(i).name, inventoryExp.get(i).popularity.toString(), inventoryExp.get(i).stock.toString(), inventoryExp.get(i).expiryDate.toString()});
-			}
-			else
-			{
-				stockTableModel.addRow(new String[]{inventoryExp.get(i).name, inventoryExp.get(i).popularity.toString(), inventoryExp.get(i).stock.toString()});
-			}
-		}
-		*/
+
 		//Combo Box
 		sortByCombo.removeAllItems();
-		
 		for(int i = 0; i < columns.length; i++) {
 			sortByCombo.addItem(columns[i]);
 		}
-		
-		System.out.println("update stock called");
+	}
+	
+	private void UpdateStockExp()
+	{
+		//Activate column
+		stockTableModel.setColumnIdentifiers(columnHeadersExp);
+		for(int i = 0; i < inventoryStock.size(); i++) {
+			stockTableModel.addRow(new String[]{inventoryStock.get(i).getName(), inventoryStock.get(i).getStock().toString(), inventoryStock.get(i).getPopularity().toString(), inventoryStock.get(i).getRestockLimit().toString(), inventoryStock.get(i).getBatchNumber().toString(), inventoryStock.get(i).getExpiryDate().toString()});
+		}
+	}
+	
+	private void UpdateStockNoExp()
+	{
+		//Deactivate column
+		stockTableModel.setColumnIdentifiers(columnHeadersNoExp);
+		for(int i = 0; i < inventoryNoStock.size(); i++) {
+			stockTableModel.addRow(new String[]{inventoryNoStock.get(i).getName(), inventoryNoStock.get(i).getStock().toString(), inventoryNoStock.get(i).getPopularity().toString(), inventoryNoStock.get(i).getRestockLimit().toString()});
+		}
 	}
 }
