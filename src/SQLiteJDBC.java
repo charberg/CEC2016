@@ -5,6 +5,49 @@ public final class SQLiteJDBC
 {
     private SQLiteJDBC(){}
 
+    public static void updateFoodItem(FoodItem foodItem){
+        Connection c = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("UPDATE food_items SET restock_limit = ?, popularity = ? WHERE name = ?");
+            s.setString(3, foodItem.getName());
+            s.setInt(1, foodItem.getRestockLimit());
+            s.setInt(2, foodItem.getPopularity());
+            s.executeUpdate();
+            s.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+    }
+
+    public static void updateFoodStock(FoodStock foodStock){
+        Connection c = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("UPDATE food_stock SET stock = ?, exp = ? WHERE name = ? AND batch_number = ?");
+            s.setInt(1, foodStock.getStock());
+            s.setDate(2, toSQLDate(foodStock.getExpiryDate()));
+            s.setString(3, foodStock.getName());
+            s.setInt(4, foodStock.getBatchNumber());
+            s.executeUpdate();
+            s.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+    }
+
     public static void bulkInsert(ArrayList<FoodStock> foodStocks){
         Connection c = null;
         try {
