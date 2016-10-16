@@ -58,7 +58,7 @@ public class MainFrame extends JFrame {
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
-		JMenuItem mntmOpen = new JMenuItem("Open");
+		JMenuItem mntmOpen = new JMenuItem("Open Food File");
 		mntmOpen.setActionCommand("openfile");
 		mntmOpen.addActionListener(listener);
 		mnFile.add(mntmOpen);
@@ -133,7 +133,7 @@ public class MainFrame extends JFrame {
 		
 		JPanel workerPanel = new JPanel();
 		workerPanel.setBackground(Color.WHITE);
-		tabbedPane.addTab("Worker", null, workerPanel, null);
+		tabbedPane.addTab("Employee", null, workerPanel, null);
 	}
 	
 	/**

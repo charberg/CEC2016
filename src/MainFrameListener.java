@@ -1,6 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 public class MainFrameListener implements ActionListener{
@@ -22,7 +23,15 @@ public class MainFrameListener implements ActionListener{
 				frame.UpdateStock();
 				break;
 			case "openfile":
-				System.out.println("open file");
+				JFileChooser fc = new JFileChooser();
+				int result = fc.showOpenDialog(frame);
+				if(result != -1)
+				{
+					String file = fc.getSelectedFile().getAbsolutePath();
+					SQLiteJDBC.bulkInsert(DocParser.parseFoodListDocx(file));
+					frame.UpdateStock();
+					System.out.println("got file");
+				}
 				break;
 			case "setrestock":
 				if(frame.getStockTable().getSelectedRow() == -1)
