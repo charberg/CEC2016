@@ -35,7 +35,7 @@ public class DocParser {
 		
 		for(String line : lines) {
 			
-			String[] lineItems = line.split("\\t");
+			String[] lineItems = line.split("\\t+");
 			DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
 			Date date;
 			try {
@@ -46,7 +46,7 @@ public class DocParser {
 			}
 
 			try {
-			items.add(new FoodItem(lineItems[0], date, Integer.parseInt(lineItems[2].replaceAll("\\s", "")), (int)(Math.random()*9000)+1000));
+			items.add(new FoodItem(lineItems[0], date, Integer.parseInt(lineItems[2].replaceAll("\\s+", "")), (int)(Math.random()*9000)+1000));
 			}
 			catch (Exception e) {
 				System.out.println("!!!" + line + "!!!");
@@ -61,11 +61,12 @@ public class DocParser {
     }
 	
 	
-//	public static void main(String[] args) {
+	//public static void main(String[] args) {
 		
-	//	DocParser.parseFoodListDocx("Programming Food List.docx");
+	//	ArrayList<FoodItem> items = DocParser.parseFoodListDocx("Programming Food List.docx");
+	//	System.out.println("Done");
 		
-//	}
+	//}
 	
 	
 	
