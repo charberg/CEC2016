@@ -1,6 +1,8 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JOptionPane;
+
 public class MainFrameListener implements ActionListener{
 	
 	private MainFrame frame;
@@ -21,6 +23,13 @@ public class MainFrameListener implements ActionListener{
 				break;
 			case "openfile":
 				System.out.println("open file");
+				break;
+			case "setrestock":
+				String value = JOptionPane.showInputDialog(frame, "Input the new value:","Restock Limit", JOptionPane.PLAIN_MESSAGE);
+				if(value != null && !value.isEmpty())
+				{
+					frame.setRestock(value);
+				}
 				break;
 		}
 	}

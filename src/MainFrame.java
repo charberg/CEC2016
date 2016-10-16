@@ -3,8 +3,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -92,6 +90,8 @@ public class MainFrame extends JFrame {
 		sotckSidePanel.add(expiryViewCheck, gbc_expiryViewCheck);
 		
 		JButton setLimitButton = new JButton("Set Restock Limit");
+		setLimitButton.setActionCommand("setrestock");
+		setLimitButton.addActionListener(listener);
 		GridBagConstraints gbc_setLimitButton = new GridBagConstraints();
 		gbc_setLimitButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_setLimitButton.insets = new Insets(0, 0, 5, 0);
@@ -163,4 +163,18 @@ public class MainFrame extends JFrame {
 		}
 	}
 
+	public void setRestock(String value)
+	{
+		int selectedIndex = stockTable.getSelectedRow();
+		if(expiryViewCheck.isSelected())
+		{
+			inventoryStock.get(selectedIndex).setRestockLimit(Integer.parseInt(value));
+		}
+		else
+		{
+			inventoryNoStock.get(selectedIndex).setRestockLimit(Integer.parseInt(value));
+		}
+		UpdateStock();
+		
+	}
 }
