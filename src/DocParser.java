@@ -47,7 +47,7 @@ public class DocParser {
 			}
 
 			try {
-			items.add(new FoodStock(lineItems[0], date, new Integer(Integer.parseInt(lineItems[2].replaceAll("\\s+", ""))), new Integer((int)(Math.random()*9000)+1000), 0, 0));
+			items.add(new FoodStock(lineItems[0], date, Integer.parseInt(lineItems[2].replaceAll("\\s+", "")), (int) (Math.random() * 9000) + 1000, 0, 0));
 			}
 			catch (Exception e) {
 				System.out.println("Problem parsing line: " + line);
