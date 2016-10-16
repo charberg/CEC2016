@@ -25,7 +25,7 @@ public class ScheduleGenerator {
 
 	
 	
-	public static void generateSchedule(ArrayList<Employee> employees) {
+	public static String[][] generateSchedule(ArrayList<Employee> employees) {
 		
 		String[][] schedule = new String[6][10];
 		
@@ -52,6 +52,8 @@ public class ScheduleGenerator {
 				}
 			}
 		}
+		
+		return schedule;
 	}
 	
 	private static String findEmployee(ArrayList<Employee> usedEmployees,ArrayList<Employee> employees, int day, int hour) {
