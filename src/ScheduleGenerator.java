@@ -170,7 +170,7 @@ public class ScheduleGenerator {
 			eend = employees.get(i).endTimes.get(getDay(day));
 			
 			if (estart != null && eend != null) {
-				if (estart.after(start) && eend.before(end)) {
+				if (start.after(estart) && eend.before(end)) {
 					employeeChoosen = employees.get(i).name;
 					usedEmployees.add(employees.remove(i));
 					return employeeChoosen;
