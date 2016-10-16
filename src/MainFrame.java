@@ -16,7 +16,8 @@ public class MainFrame extends JFrame {
 	private JCheckBox expiryViewCheck;
 	private JComboBox<String> sortByCombo;
 	private DefaultTableModel stockTableModel;
-	private ArrayList<FoodItem> inventory;
+	private ArrayList<FoodItem> inventoryNoStock;
+	private ArrayList<FoodStock> inventoryStock;
 	
 	private static String[] columnHeadersNoExp = new String[]{"Name", "Stock", "Popularity"};
 	private static String[] columnHeadersExp = new String[]{"Name", "Stock", "Popularity", "Expiry"};
@@ -128,8 +129,7 @@ public class MainFrame extends JFrame {
 		gbc_sortByCombo.gridy = 3;
 		sotckSidePanel.add(sortByCombo, gbc_sortByCombo);
 		
-		inventory = new ArrayList<FoodItem>();
-		inventory.add(new FoodItem("testy", new Date(), 0, 0, 0, 0));
+		inventoryStock = new ArrayList<FoodStock>();
 		
 		stockTableModel = new DefaultTableModel(columnHeadersNoExp, 0);
 		stockTable = new JTable(stockTableModel);
@@ -163,18 +163,18 @@ public class MainFrame extends JFrame {
 		stockTableModel.setColumnIdentifiers(columns);
 		
 		stockTableModel.setRowCount(0);
-		
-		for(int i = 0; i < inventory.size(); i++) {
+		/*
+		for(int i = 0; i < inventoryStock.size(); i++) {
 			if(exp)
 			{
-				stockTableModel.addRow(new String[]{inventory.get(i).name, inventory.get(i).popularity.toString(), inventory.get(i).stock.toString(), inventory.get(i).expiryDate.toString()});
+				stockTableModel.addRow(new String[]{inventoryStock.get(i).name, inventoryExp.get(i).popularity.toString(), inventoryExp.get(i).stock.toString(), inventoryExp.get(i).expiryDate.toString()});
 			}
 			else
 			{
-				stockTableModel.addRow(new String[]{inventory.get(i).name, inventory.get(i).popularity.toString(), inventory.get(i).stock.toString()});
+				stockTableModel.addRow(new String[]{inventoryExp.get(i).name, inventoryExp.get(i).popularity.toString(), inventoryExp.get(i).stock.toString()});
 			}
 		}
-		
+		*/
 		//Combo Box
 		sortByCombo.removeAllItems();
 		
