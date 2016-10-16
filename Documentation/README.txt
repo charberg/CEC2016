@@ -27,7 +27,7 @@ product popularity tracking, automatic volunteer assignment, and an intuitive wa
 The project is available here: https://github.com/charberg/CEC2016
 This project can be imported into and worked on in any Java IDE. The IDE used during its creation was primarily Eclipse.
 We strongly recommend using the Eclipse IDE as it was what the program was first developed in. This project also relies on the external libraries
-SQLite and Apache POI. In order to develop using SQLite libraries, you will need to install it from https://sqlite.org/download.html (we are using 
+SQLite, Apache POI and JavaMail. In order to develop using SQLite libraries, you will need to install it from https://sqlite.org/download.html (we are using 
 v 3.14.2.1). The JAR files are already included within the project, the developer only needs to ensure the JAR files in the lib directory 
 is included in the class path in order to and run the program.
 
@@ -37,6 +37,9 @@ Website: https://sqlite.org/
 We are using SQLite to create and manage the database the program uses to keep track of all volunteer and product information.
 
 Apache POI
-Wedsite: https://poi.apache.org/
+Website: https://poi.apache.org/
 We are using Apache POI in order to parse and import Microsoft suite of file types into a readable format for Java.
 
+JavaMail API
+Website: http://www.oracle.com/technetwork/java/javamail/index.html
+We are using JavaMail to send email notification.
