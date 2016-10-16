@@ -43,7 +43,7 @@ public class MainFrameListener implements ActionListener{
 				}
 				break;
 			case "setrestock":
-				if(frame.getStockTable().getSelectedRow() == -1)
+				if(frame.getStockTable().getSelectedRow() == -1 || frame.getStockSelected())
 				{
 					break;
 				}
