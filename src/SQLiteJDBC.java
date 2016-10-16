@@ -234,6 +234,41 @@ public final class SQLiteJDBC
 
     }
 
+    public static void bulkInsertEmployees(ArrayList<Employee> employees){
+        Connection c = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s = c.prepareStatement("INSERT INTO employees(name, start_monday, end_monday, start_tuesday, end_tuesday, start_wednesday, " +
+                            "end_wednesday, start_thursday, end_thursday, start_friday, end_friday, start_saturday, end_saturday, overnight)   " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            for(Employee employee : employees){
+                s.setString(1, employee.getName());
+                s.setDate(2, toSQLDate(employee.startTimes.get("monday")));
+                s.setDate(3, toSQLDate(employee.endTimes.get("monday")));
+                s.setDate(4, toSQLDate(employee.startTimes.get("tuesday")));
+                s.setDate(5, toSQLDate(employee.endTimes.get("tuesday")));
+                s.setDate(6, toSQLDate(employee.startTimes.get("wednesday")));
+                s.setDate(7, toSQLDate(employee.endTimes.get("wednesday")));
+                s.setDate(8, toSQLDate(employee.startTimes.get("thursday")));
+                s.setDate(9, toSQLDate(employee.endTimes.get("thursday")));
+                s.setDate(10, toSQLDate(employee.startTimes.get("friday")));
+                s.setDate(11, toSQLDate(employee.endTimes.get("friday")));
+                s.setDate(12, toSQLDate(employee.startTimes.get("saturday")));
+                s.setDate(13, toSQLDate(employee.endTimes.get("saturday")));
+                s.setBoolean(14, employee.getOvernight());
+                s.executeUpdate();
+            }
+            s.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+    }
+
     private static java.sql.Date toSQLDate(java.util.Date d){
         if(d == null)
             return null;
