@@ -15,7 +15,7 @@ import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 
 public class DocParser {
 
-	public static ArrayList<FoodItem> parseFoodListDocx(String filePath)
+	public static ArrayList<FoodStock> parseFoodListDocx(String filePath)
     {
 		
 		ArrayList<String> lines;
@@ -32,7 +32,7 @@ public class DocParser {
             return null;
         }
 		
-		ArrayList<FoodItem> items = new ArrayList<FoodItem>();
+		ArrayList<FoodStock> items = new ArrayList<FoodStock>();
 		
 		for(String line : lines) {
 			
@@ -47,7 +47,7 @@ public class DocParser {
 			}
 
 			try {
-			items.add(new FoodItem(lineItems[0], date, Integer.parseInt(lineItems[2].replaceAll("\\s+", "")), (int)(Math.random()*9000)+1000));
+			items.add(new FoodStock(lineItems[0], date, new Integer(Integer.parseInt(lineItems[2].replaceAll("\\s+", ""))), new Integer((int)(Math.random()*9000)+1000), 0, 0));
 			}
 			catch (Exception e) {
 				System.out.println("Problem parsing line: " + line);

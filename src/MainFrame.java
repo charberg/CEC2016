@@ -5,15 +5,24 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class MainFrame extends JFrame {
 	
 	private JPanel stockPanel;
 	private JPanel contentPane;
 	private JTable stockTable;
+	private JCheckBox expiryViewCheck;
 	private JComboBox<String> sortByCombo;
 	private DefaultTableModel stockTableModel;
-
+	private ArrayList<FoodItem> inventoryNoStock;
+	private ArrayList<FoodStock> inventoryStock;
+	private MainFrameListener listener;
+	
+	private static String[] columnHeadersNoExp = new String[]{"Name", "Stock", "Popularity", "Restock Limit"};
+	private static String[] columnHeadersExp = new String[]{"Name", "Stock", "Popularity", "Restock Limit", "Batch", "Expiry"};
+	
 	/**
 	 * Launch the application.
 	 */
@@ -38,6 +47,8 @@ public class MainFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 692, 515);
 		
+		listener = new MainFrameListener(this);
+		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -45,20 +56,9 @@ public class MainFrame extends JFrame {
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmOpen = new JMenuItem("Open");
+		mntmOpen.setActionCommand("openfile");
+		mntmOpen.addActionListener(listener);
 		mnFile.add(mntmOpen);
-		
-		JMenu mnTesting = new JMenu("Testing");
-		menuBar.add(mnTesting);
-		
-		JMenuItem testRefreshStock = new JMenuItem("Refresh Stock");
-		testRefreshStock.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				UpdateStock();
-				System.out.println("BRAP");
-			}
-		});
-		mnTesting.add(testRefreshStock);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -81,7 +81,9 @@ public class MainFrame extends JFrame {
 		gbl_sotckSidePanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		sotckSidePanel.setLayout(gbl_sotckSidePanel);
 		
-		JCheckBox expiryViewCheck = new JCheckBox("Expiry View");
+		expiryViewCheck = new JCheckBox("Expiry View");
+		expiryViewCheck.setActionCommand("expiryview");
+		expiryViewCheck.addActionListener(listener);
 		GridBagConstraints gbc_expiryViewCheck = new GridBagConstraints();
 		gbc_expiryViewCheck.anchor = GridBagConstraints.NORTHWEST;
 		gbc_expiryViewCheck.insets = new Insets(0, 0, 5, 0);
@@ -89,7 +91,7 @@ public class MainFrame extends JFrame {
 		gbc_expiryViewCheck.gridy = 0;
 		sotckSidePanel.add(expiryViewCheck, gbc_expiryViewCheck);
 		
-		JButton setLimitButton = new JButton("Set Limit");
+		JButton setLimitButton = new JButton("Set Restock Limit");
 		GridBagConstraints gbc_setLimitButton = new GridBagConstraints();
 		gbc_setLimitButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_setLimitButton.insets = new Insets(0, 0, 5, 0);
@@ -107,7 +109,6 @@ public class MainFrame extends JFrame {
 		sotckSidePanel.add(sortByLabel, gbc_sortByLabel);
 		
 		sortByCombo = new JComboBox<String>();
-		sortByCombo.addItem("Test1");
 		GridBagConstraints gbc_sortByCombo = new GridBagConstraints();
 		gbc_sortByCombo.insets = new Insets(0, 0, 5, 0);
 		gbc_sortByCombo.fill = GridBagConstraints.HORIZONTAL;
@@ -115,28 +116,15 @@ public class MainFrame extends JFrame {
 		gbc_sortByCombo.gridy = 3;
 		sotckSidePanel.add(sortByCombo, gbc_sortByCombo);
 		
-		JButton btnTest = new JButton("Test");
-		btnTest.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("Test button clicked");
-				UpdateStock();
-			}
-		});
-		GridBagConstraints gbc_btnTest = new GridBagConstraints();
-		gbc_btnTest.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnTest.gridx = 0;
-		gbc_btnTest.gridy = 4;
-		sotckSidePanel.add(btnTest, gbc_btnTest);
+		inventoryStock = SQLiteJDBC.selectFoodStock();
+		inventoryNoStock = SQLiteJDBC.selectFoodItem();
 		
-		stockTableModel = new DefaultTableModel();
-		stockTableModel.addColumn("Name");
-		stockTableModel.addRow(new Object[]{"test"});
-		
+		stockTableModel = new DefaultTableModel(columnHeadersNoExp, 0);
 		stockTable = new JTable(stockTableModel);
 		JScrollPane stockScrollPanel = new JScrollPane(stockTable);
 		stockPanel.add(stockScrollPanel, BorderLayout.CENTER);
 		
+		UpdateStock();
 		
 		JPanel workerPanel = new JPanel();
 		workerPanel.setBackground(Color.WHITE);
@@ -148,14 +136,31 @@ public class MainFrame extends JFrame {
 	 */
 	public void UpdateStock()
 	{
-		//Combo Box
-		sortByCombo.removeAllItems();
-		sortByCombo.addItem("Test");
-		
 		//Table
 		stockTableModel.setColumnCount(0);
-		stockTableModel.addColumn("UPDATE TEST");
-		
-		System.out.println("update stock called");
+		stockTableModel.setRowCount(0);
+		String[] columns = columnHeadersExp;
+		if(expiryViewCheck.isSelected()) {
+			//Activate column
+			stockTableModel.setColumnIdentifiers(columnHeadersExp);
+			for(int i = 0; i < inventoryStock.size(); i++) {
+				stockTableModel.addRow(new String[]{inventoryStock.get(i).getName(), inventoryStock.get(i).getStock().toString(), inventoryStock.get(i).getPopularity().toString(), inventoryStock.get(i).getRestockLimit().toString(), inventoryStock.get(i).getBatchNumber().toString(), inventoryStock.get(i).getExpiryDate().toString()});
+			}
+		} 
+		else {
+			//Deactivate column
+			stockTableModel.setColumnIdentifiers(columnHeadersNoExp);
+			for(int i = 0; i < inventoryNoStock.size(); i++) {
+				stockTableModel.addRow(new String[]{inventoryNoStock.get(i).getName(), inventoryNoStock.get(i).getStock().toString(), inventoryNoStock.get(i).getPopularity().toString(), inventoryNoStock.get(i).getRestockLimit().toString()});
+			}
+			columns = columnHeadersNoExp;
+		}
+
+		//Combo Box
+		sortByCombo.removeAllItems();
+		for(int i = 0; i < columns.length; i++) {
+			sortByCombo.addItem(columns[i]);
+		}
 	}
+
 }

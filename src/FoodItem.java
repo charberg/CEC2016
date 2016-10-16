@@ -1,26 +1,16 @@
-import java.util.Date;
-
 
 public class FoodItem {
 
-	String name;
-	Date expiryDate;
-	int stock;
-	int batchNumber;
+	protected String name;
+	protected Integer restockLimit;
+	protected Integer popularity;
+	protected Integer stock;
 	
-	public FoodItem(String name, Date expiryDate, int stock, int batchNumber) {
+	public FoodItem(String name, int restockLimit, int popularity, int stock) {
 		this.name = name;
-		this.expiryDate = expiryDate;
+		this.restockLimit = restockLimit;
+		this.popularity = popularity;
 		this.stock = stock;
-		this.batchNumber = batchNumber;
-	}
-	
-	public int getBatchNumber() {
-		return batchNumber;
-	}
-	
-	public void setBatchNumber(int batchNumber) {
-		this.batchNumber = batchNumber;
 	}
 
 	public String getName() {
@@ -30,21 +20,31 @@ public class FoodItem {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public Date getExpiryDate() {
-		return expiryDate;
+	
+	public Integer getRestockLimit() {
+		return restockLimit;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
-		this.expiryDate = expiryDate;
+	public void setRestockLimit(Integer limit) {
+		this.restockLimit = limit;
+	}
+	
+	public Integer getPopularity() {
+		return popularity;
 	}
 
-	public int getStock() {
-		return stock;
+	public void setPopularity(Integer limit) {
+		this.popularity = limit;
 	}
-
-	public void setStock(int stock) {
+	
+	public void setStock(Integer stock)
+	{
 		this.stock = stock;
+	}
+	
+	public Integer getStock()
+	{
+		return stock;
 	}
 	
 }
