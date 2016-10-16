@@ -247,7 +247,8 @@ public class DocParser {
 						
 						employee.setStartTime(lineItems[i], startDate);
 						employee.setEndTime(lineItems[i], endDate);
-						break;
+						i++;
+						continue;
 					}
 					
 					//Next item IS a time range! Now things get tricky. Multiple formats, and figure AM/PM offsets
