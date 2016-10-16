@@ -272,28 +272,31 @@ public class DocParser {
 						Calendar startCal = Calendar.getInstance();
 						Calendar endCal = Calendar.getInstance();
 						
+						boolean formatPassStart = false;
+						boolean formatPassEnd = false;
+						
 						for(DateFormat format : formats) {
 							try {
 								startCal.setTime(format.parse(startStr));
+								formatPassStart = true;
 								break;
 							} catch(ParseException e) {
 								//Format didn't stick, try the next
 							}
 						}
 						
-						boolean formatPass = false;
 						
 						for(DateFormat format : formats) {
 							try {
 								endCal.setTime(format.parse(endStr));
-								formatPass = true;
+								formatPassEnd = true;
 								break;
 							} catch(ParseException e) {
 								//Format didn't stick, try the next
 							}
 						}
 						
-						if(formatPass = false) {
+						if(formatPassStart = false || formatPassEnd == false) {
 							//None of the formats worked, failure in parsing
 							System.out.println("Error parsing date: " + timeRange);
 							return null;
@@ -319,9 +322,7 @@ public class DocParser {
 					}
 
 				}
-				
 				i++;
-				
 			}
 			
 			items.add(employee);
