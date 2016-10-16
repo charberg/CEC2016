@@ -58,7 +58,53 @@ public final class SQLiteJDBC
         }
     }
 
+    public static ArrayList<FoodItem> selectFoodItem(){
+        Connection c = null;
+        ArrayList<FoodItem> foodItems = new ArrayList<>();
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("SELECT food_stock.name, restock_limit, popularity, SUM(stock) AS stockTotal " +
+                    "FROM food_items INNER JOIN food_stock WHERE food_items.name = food_stock.name GROUP BY food_items.name");
+            ResultSet rs = s.executeQuery();
+            while(rs.next()){
+                foodItems.add(new FoodItem(rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getInt(4)));
+            }
+            s.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
 
+        return foodItems;
+    }
+
+    public static ArrayList<FoodStock> selectFoodStock(){
+        Connection c = null;
+        ArrayList<FoodStock> foodStocks = new ArrayList<>();
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("SELECT food_stock.name, exp, stock, batch_number, restock_limit, popularity " +
+                    "FROM food_stock INNER JOIN food_items ON food_stock.name = food_items.name");
+            ResultSet rs = s.executeQuery();
+            while(rs.next()){
+                foodStocks.add(new FoodStock(rs.getString(1), rs.getDate(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getInt(6)));
+            }
+            s.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+
+        return foodStocks;
+    }
 
     private static java.sql.Date toSQLDate(java.util.Date d){
         return new java.sql.Date(d.getTime());
