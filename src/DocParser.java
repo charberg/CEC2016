@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -59,7 +60,7 @@ public class DocParser {
 		
     }
 	
-	/*
+	
 	public static ArrayList<Employee> parseEmployeeListDocx(String filePath)
     {
 		
@@ -96,20 +97,25 @@ public class DocParser {
         }
 		
 		ArrayList<Employee> items = new ArrayList<Employee>();
-		Date d = new Date();
-		d.setYear(2001);
-		d.setMonth(1);
-		d.setDate(1);
 		
 		for(String line : lines) {
 			
-			line.replaceAll(",", "");
-			line.toLowerCase();
-			String[] lineItems = line.split("\\s+");
-			//DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
-			String name = lineItems[0] + " " + lineItems[1];	//Get the first and last name
+			if(line.length() == 0 || line.contains("The operating hours")) {
+				//String from end of doc, just exit
+				break;
+			}
 			
+			line = line.replaceAll(",", "");
+			line = line.replaceAll("\t", " ");
+			line = line.toLowerCase();
+			String[] lineItems = line.split("\\s+");
+			
+			//DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+
+			String name = lineItems[0] + " " + lineItems[1];	//Get the first and last name
+
 			Employee employee = new Employee();
+			employee.setName(name);
 			
 			int i = 2;
 			while(i < lineItems.length) {	//Iterate over each object in the line, due to nasty multi-format date strings
@@ -128,20 +134,17 @@ public class DocParser {
 					while(startVal <= endVal) {
 						Date startDate = new Date();
 						//Set start time
-						startDate.setYear(2001);
-						startDate.setMonth(1);
-						startDate.setDate(startVal);
-						startDate.setHours(8);
-						startDate.setMinutes(30);
+						Calendar cal = Calendar.getInstance();
+						cal.set(2001, 0, startVal, 8, 30);
+						startDate = cal.getTime();
 						
 						//Set end time
 						Date endDate = new Date();
 						//Set start time
-						endDate.setYear(2001);
-						endDate.setMonth(1);
-						endDate.setDate(startVal);
-						endDate.setHours(17);
-						endDate.setMinutes(30);
+						cal = Calendar.getInstance();
+						cal.set(2001, 0, endVal, 17, 30);
+						endDate = cal.getTime();
+
 						
 						employee.setStartTime(valToDay.get(startVal), startDate);
 						employee.setEndTime(valToDay.get(startVal), endDate);
@@ -153,6 +156,10 @@ public class DocParser {
 				
 				//Check if no number in string, so not a specific time, but a day
 				else if(!lineItems[i].matches(".*\\d+.*")) {
+					
+					if(lineItems[i].charAt(lineItems[i].length()-1) == 's') {
+						lineItems[i] = lineItems[i].substring(0, lineItems[i].length()-1);
+					}
 					
 					//Separate check for saturday, since it may specify overnights next
 					if(lineItems[i].contains("saturday")) {
@@ -169,20 +176,16 @@ public class DocParser {
 						
 						Date startDate = new Date();
 						//Set start time
-						startDate.setYear(2001);
-						startDate.setMonth(1);
-						startDate.setDate(6);
-						startDate.setHours(8);
-						startDate.setMinutes(30);
+						Calendar cal = Calendar.getInstance();
+						cal.set(2001, 0, 6, 8, 30);
+						startDate = cal.getTime();
 						
 						//Set end time
 						Date endDate = new Date();
-						//Set start time
-						endDate.setYear(2001);
-						endDate.setMonth(1);
-						endDate.setDate(6);
-						endDate.setHours(17);
-						endDate.setMinutes(30);
+
+						cal = Calendar.getInstance();
+						cal.set(2001, 0, 6, 17, 30);
+						endDate = cal.getTime();
 						
 						employee.setStartTime("saturday", startDate);
 						employee.setEndTime("saturday", endDate);
@@ -198,22 +201,20 @@ public class DocParser {
 					}
 					catch(ArrayIndexOutOfBoundsException e) {
 						//No more items after this one, means no specific time range, so can just do full day, and break out of loop
+						if(lineItems[i].charAt(lineItems[i].length()-1) == 's') {
+							lineItems[i] = lineItems[i].substring(0, lineItems[i].length()-1);
+						}
 						Date startDate = new Date();
 						//Set start time
-						startDate.setYear(2001);
-						startDate.setMonth(1);
-						startDate.setDate(dayToVal.get(lineItems[i]));
-						startDate.setHours(8);
-						startDate.setMinutes(30);
+						Calendar cal = Calendar.getInstance();
+						cal.set(2001, 0, dayToVal.get(lineItems[i]), 8, 30);
+						startDate = cal.getTime();
 						
 						//Set end time
 						Date endDate = new Date();
-						//Set start time
-						endDate.setYear(2001);
-						endDate.setMonth(1);
-						endDate.setDate(dayToVal.get(lineItems[i]));
-						endDate.setHours(17);
-						endDate.setMinutes(30);
+						
+						cal.set(2001, 0, dayToVal.get(lineItems[i]), 17, 30);
+						endDate = cal.getTime();
 						
 						employee.setStartTime(lineItems[i], startDate);
 						employee.setEndTime(lineItems[i], endDate);
@@ -221,23 +222,28 @@ public class DocParser {
 					}
 					
 					if(!timeRange.matches(".*\\d+.*")) {
+						
+						if(dayToVal.get(lineItems[i]) == null) {
+							continue;
+						}
+						
 						//Next item is NOT a time range, so just make the full day
+						if(lineItems[i].charAt(lineItems[i].length()-1) == 's') {
+							lineItems[i] = lineItems[i].substring(0, lineItems[i].length()-1);
+						}
 						Date startDate = new Date();
 						//Set start time
-						startDate.setYear(2001);
-						startDate.setMonth(1);
-						startDate.setDate(dayToVal.get(lineItems[i]));
-						startDate.setHours(8);
-						startDate.setMinutes(30);
+						Calendar cal = Calendar.getInstance();
+						cal.set(2001, 0, dayToVal.get(lineItems[i]), 8, 30);
+						startDate = cal.getTime();
 						
 						//Set end time
 						Date endDate = new Date();
 						//Set start time
-						endDate.setYear(2001);
-						endDate.setMonth(1);
-						endDate.setDate(dayToVal.get(lineItems[i]));
-						endDate.setHours(17);
-						endDate.setMinutes(30);
+						
+						cal = Calendar.getInstance();
+						cal.set(2001, 0, dayToVal.get(lineItems[i]), 17, 30);
+						endDate = cal.getTime();
 						
 						employee.setStartTime(lineItems[i], startDate);
 						employee.setEndTime(lineItems[i], endDate);
@@ -247,48 +253,93 @@ public class DocParser {
 					//Next item IS a time range! Now things get tricky. Multiple formats, and figure AM/PM offsets
 					else {
 						
+						//Split date into begin/end times
+						
+						String[] split = timeRange.split("-");
+						String startStr = split[0];
+						String endStr = split[1];
+						
+						DateFormat format1 = new SimpleDateFormat("HH:mma", Locale.US);
+						DateFormat format2 = new SimpleDateFormat("HHa", Locale.US);
+						
+						ArrayList<DateFormat> formats = new ArrayList<DateFormat>();
+						formats.add(format1);
+						formats.add(format2);
+						
+						Date startDate = null;
+						Date endDate = null;
+						
+						Calendar startCal = Calendar.getInstance();
+						Calendar endCal = Calendar.getInstance();
+						
+						for(DateFormat format : formats) {
+							try {
+								startCal.setTime(format.parse(startStr));
+								break;
+							} catch(ParseException e) {
+								//Format didn't stick, try the next
+							}
+						}
+						
+						boolean formatPass = false;
+						
+						for(DateFormat format : formats) {
+							try {
+								endCal.setTime(format.parse(endStr));
+								formatPass = true;
+								break;
+							} catch(ParseException e) {
+								//Format didn't stick, try the next
+							}
+						}
+						
+						if(formatPass = false) {
+							//None of the formats worked, failure in parsing
+							System.out.println("Error parsing date: " + timeRange);
+							return null;
+						}
+						
+						startCal.set(Calendar.YEAR, 2001);
+						startCal.set(Calendar.MONTH, 0);
+						startCal.set(Calendar.DAY_OF_MONTH, dayToVal.get(lineItems[i]));
+						startDate = startCal.getTime();
+						
+						endCal.set(Calendar.YEAR, 2001);
+						endCal.set(Calendar.MONTH, 0);
+						endCal.set(Calendar.DAY_OF_MONTH, dayToVal.get(lineItems[i]));
+						endDate = endCal.getTime();
+						
+						employee.setStartTime(lineItems[i], startDate);
+						employee.setEndTime(lineItems[i], endDate);
+						
+						//Skip the next element, we parsed the times
+						i++;
 						
 						
 					}
-					
-					
-					
+
 				}
 				
 				i++;
 				
 			}
 			
+			items.add(employee);
 			
-			Date date;
-			try {
-				date = format.parse(lineItems[1]);
-			} catch (ParseException e) {
-				System.out.println("Unable to parse date string: " + lineItems[1] + " Not in the right format. MMMM, d, yyyy");
-				return null;
-			}
-
-			try {
-			//items.add(new FoodItem(lineItems[0], date, Integer.parseInt(lineItems[2].replaceAll("\\s+", "")), (int)(Math.random()*9000)+1000));
-			}
-			catch (Exception e) {
-				System.out.println("Problem parsing line: " + line);
-				return null;
-			}
 		}
 		
 		return items;
 		
-    } */
+    } 
 	
 	
 	
-/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		
 		ArrayList<Employee> items = DocParser.parseEmployeeListDocx("Programming Employee List.docx");
 		System.out.println("Done");
 		
-	}*/
+	}
 	
 	
 	
