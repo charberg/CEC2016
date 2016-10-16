@@ -9,7 +9,7 @@ import javax.naming.directory.*;
 //Currently not working
 public class EmailerSender {
 
-    public static void snedNotification(String name) {
+    public static void sendNotification(String name) {
     	 try {
              String[] mx = getMX("gmail.com");
              for(String mxx : mx) {
@@ -65,7 +65,7 @@ public class EmailerSender {
     }
 
     public static void main(String[] args) {
-    	snedNotification("test");
+    	sendNotification("test");
     }
     
     
