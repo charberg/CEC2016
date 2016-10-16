@@ -8,6 +8,7 @@ public class Employee {
 	HashMap<String, Date> startTimes;
 	HashMap<String, Date> endTimes;
 	boolean overnight = false;
+	Integer employeeId = null;
 	
 	public Employee() {
 		startTimes = new HashMap<String, Date>();
@@ -30,6 +31,28 @@ public class Employee {
 		this();
 		this.name = name;
 		
+	}
+
+	public Employee(Integer employeeId, String name, Date startMonday, Date endMonday, Date startTuesday, Date endTuesday, Date startWednesday,
+					Date endWednesday, Date startThursday, Date endThursday, Date startFriday, Date endFriday, Date startSaturday,
+					Date endSaturday, Boolean overnight){
+		this.employeeId = employeeId;
+		this.name = name;
+		this.overnight = overnight;
+		startTimes = new HashMap<String, Date>();
+		startTimes.put("monday", startMonday);
+		startTimes.put("tuesday", startTuesday);
+		startTimes.put("wednesday", startWednesday);
+		startTimes.put("thursday", startThursday);
+		startTimes.put("friday", startFriday);
+		startTimes.put("saturday", startSaturday);
+		endTimes = new HashMap<String, Date>();
+		endTimes.put("monday", endMonday);
+		endTimes.put("tuesday", endTuesday);
+		endTimes.put("wednesday", endWednesday);
+		endTimes.put("thursday", endThursday);
+		endTimes.put("friday", endFriday);
+		endTimes.put("saturday", endSaturday);
 	}
 	
 	public void setName(String name) {

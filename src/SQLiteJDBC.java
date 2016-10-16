@@ -3,21 +3,57 @@ import java.util.*;
 
 public final class SQLiteJDBC
 {
-
-    public static void main(String args[]){
-        ArrayList<FoodStock> foodStocks = new ArrayList<>();
-        foodStocks.add(new FoodStock("test3", new java.util.Date(), 42, 123, 12, 0));
-        foodStocks.add(new FoodStock("test3", new java.util.Date(), 42, 1234, 12, 0));
-        bulkInsert(foodStocks);
-    }
     private SQLiteJDBC(){}
+
+    public static void updateFoodItem(FoodItem foodItem){
+        Connection c = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("UPDATE food_items SET restock_limit = ?, popularity = ? WHERE name = ?");
+            s.setString(3, foodItem.getName());
+            s.setInt(1, foodItem.getRestockLimit());
+            s.setInt(2, foodItem.getPopularity());
+            s.executeUpdate();
+            s.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+    }
+
+    public static void updateFoodStock(FoodStock foodStock){
+        Connection c = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("UPDATE food_stock SET stock = ?, exp = ? WHERE name = ? AND batch_number = ?");
+            s.setInt(1, foodStock.getStock());
+            s.setDate(2, toSQLDate(foodStock.getExpiryDate()));
+            s.setString(3, foodStock.getName());
+            s.setInt(4, foodStock.getBatchNumber());
+            s.executeUpdate();
+            s.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+    }
 
     public static void bulkInsert(ArrayList<FoodStock> foodStocks){
         Connection c = null;
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:leos.db");
-            c.setAutoCommit(true);
+            c.setAutoCommit(false);
             PreparedStatement foodItemStatement;
             PreparedStatement foodStockStatement;
             foodItemStatement = c.prepareStatement("INSERT INTO food_items(name, restock_limit, popularity)  " +
@@ -37,6 +73,7 @@ public final class SQLiteJDBC
             }
             foodItemStatement.close();
             foodStockStatement.close();
+            c.commit();
             c.close();
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -135,7 +172,71 @@ public final class SQLiteJDBC
         return foodStocks;
     }
 
+    public static void insertEmployee(Employee employee){
+        Connection c = null;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("INSERT INTO employees(name, start_monday, end_monday, start_tuesday, end_tuesday, start_wednesday, " +
+                    "end_wednesday, start_thursday, end_thursday, start_friday, end_friday, start_saturday, end_saturday, overnight)   " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            s.setString(1, employee.getName());
+            s.setDate(2, toSQLDate(employee.startTimes.get("monday")));
+            s.setDate(3, toSQLDate(employee.endTimes.get("monday")));
+            s.setDate(4, toSQLDate(employee.startTimes.get("tuesday")));
+            s.setDate(5, toSQLDate(employee.endTimes.get("tuesday")));
+            s.setDate(6, toSQLDate(employee.startTimes.get("wednesday")));
+            s.setDate(7, toSQLDate(employee.endTimes.get("wednesday")));
+            s.setDate(8, toSQLDate(employee.startTimes.get("thursday")));
+            s.setDate(9, toSQLDate(employee.endTimes.get("thursday")));
+            s.setDate(10, toSQLDate(employee.startTimes.get("friday")));
+            s.setDate(11, toSQLDate(employee.endTimes.get("friday")));
+            s.setDate(12, toSQLDate(employee.startTimes.get("saturday")));
+            s.setDate(13, toSQLDate(employee.endTimes.get("saturday")));
+            s.setBoolean(14, employee.getOvernight());
+            s.executeUpdate();
+            s.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+    }
+
+    public static ArrayList<Employee> selectEmployees(){
+        Connection c = null;
+        ArrayList<Employee> employees = new ArrayList<>();
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("SELECT employee_ID, name, start_monday, end_monday, start_tuesday, end_tuesday, start_wednesday, " +
+                    "end_wednesday, start_thursday, end_thursday, start_friday, end_friday, start_saturday, end_saturday, overnight " +
+                    "FROM employees");
+            ResultSet rs = s.executeQuery();
+            while(rs.next()){
+                employees.add(new Employee(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getDate(4), rs.getDate(5), rs.getDate(6)
+                        , rs.getDate(7), rs.getDate(8), rs.getDate(9), rs.getDate(10), rs.getDate(11), rs.getDate(12), rs.getDate(13),
+                        rs.getDate(14), rs.getBoolean(15)));
+            }
+            s.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+
+        return employees;
+
+    }
+
     private static java.sql.Date toSQLDate(java.util.Date d){
+        if(d == null)
+            return null;
         return new java.sql.Date(d.getTime());
     }
 }

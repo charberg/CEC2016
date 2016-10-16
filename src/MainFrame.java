@@ -3,8 +3,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -38,7 +36,12 @@ public class MainFrame extends JFrame {
 			}
 		});
 	}
-
+	
+	public JTable getStockTable()
+	{
+		return stockTable;
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -55,7 +58,7 @@ public class MainFrame extends JFrame {
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
-		JMenuItem mntmOpen = new JMenuItem("Open");
+		JMenuItem mntmOpen = new JMenuItem("Open Food File");
 		mntmOpen.setActionCommand("openfile");
 		mntmOpen.addActionListener(listener);
 		mnFile.add(mntmOpen);
@@ -92,6 +95,8 @@ public class MainFrame extends JFrame {
 		sotckSidePanel.add(expiryViewCheck, gbc_expiryViewCheck);
 		
 		JButton setLimitButton = new JButton("Set Restock Limit");
+		setLimitButton.setActionCommand("setrestock");
+		setLimitButton.addActionListener(listener);
 		GridBagConstraints gbc_setLimitButton = new GridBagConstraints();
 		gbc_setLimitButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_setLimitButton.insets = new Insets(0, 0, 5, 0);
@@ -128,7 +133,7 @@ public class MainFrame extends JFrame {
 		
 		JPanel workerPanel = new JPanel();
 		workerPanel.setBackground(Color.WHITE);
-		tabbedPane.addTab("Worker", null, workerPanel, null);
+		tabbedPane.addTab("Employee", null, workerPanel, null);
 	}
 	
 	/**
@@ -142,6 +147,7 @@ public class MainFrame extends JFrame {
 		String[] columns = columnHeadersExp;
 		if(expiryViewCheck.isSelected()) {
 			//Activate column
+			inventoryStock = SQLiteJDBC.selectFoodStock();
 			stockTableModel.setColumnIdentifiers(columnHeadersExp);
 			for(int i = 0; i < inventoryStock.size(); i++) {
 				stockTableModel.addRow(new String[]{inventoryStock.get(i).getName(), inventoryStock.get(i).getStock().toString(), inventoryStock.get(i).getPopularity().toString(), inventoryStock.get(i).getRestockLimit().toString(), inventoryStock.get(i).getBatchNumber().toString(), inventoryStock.get(i).getExpiryDate().toString()});
@@ -149,6 +155,7 @@ public class MainFrame extends JFrame {
 		} 
 		else {
 			//Deactivate column
+			inventoryNoStock = SQLiteJDBC.selectFoodItem();
 			stockTableModel.setColumnIdentifiers(columnHeadersNoExp);
 			for(int i = 0; i < inventoryNoStock.size(); i++) {
 				stockTableModel.addRow(new String[]{inventoryNoStock.get(i).getName(), inventoryNoStock.get(i).getStock().toString(), inventoryNoStock.get(i).getPopularity().toString(), inventoryNoStock.get(i).getRestockLimit().toString()});
@@ -163,4 +170,24 @@ public class MainFrame extends JFrame {
 		}
 	}
 
+	public void setRestock(String value)
+	{
+		int selectedIndex = stockTable.getSelectedRow();
+		if(expiryViewCheck.isSelected())
+		{
+			inventoryStock.get(selectedIndex).setRestockLimit(Integer.parseInt(value));
+			SQLiteJDBC.updateFoodStock(inventoryStock.get(selectedIndex));
+		}
+		else
+		{
+			inventoryNoStock.get(selectedIndex).setRestockLimit(Integer.parseInt(value));
+			SQLiteJDBC.updateFoodItem(inventoryNoStock.get(selectedIndex));
+		}
+		UpdateStock();
+	}
+	
+	public void sortStock()
+	{
+		
+	}
 }
