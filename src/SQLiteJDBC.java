@@ -239,7 +239,7 @@ public final class SQLiteJDBC
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:leos.db");
-            c.setAutoCommit(false);
+            c.setAutoCommit(true);
             PreparedStatement s = c.prepareStatement("INSERT INTO employees(name, start_monday, end_monday, start_tuesday, end_tuesday, start_wednesday, " +
                             "end_wednesday, start_thursday, end_thursday, start_friday, end_friday, start_saturday, end_saturday, overnight)   " +
                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -261,7 +261,6 @@ public final class SQLiteJDBC
                 s.executeUpdate();
             }
             s.close();
-            c.commit();
             c.close();
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
