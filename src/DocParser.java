@@ -14,7 +14,7 @@ import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 
 public class DocParser {
 
-	public static ArrayList<FoodItem> parseFoodListDocx(String filePath)
+	public static ArrayList<FoodStock> parseFoodListDocx(String filePath)
     {
 		
 		ArrayList<String> lines;
@@ -31,7 +31,7 @@ public class DocParser {
             return null;
         }
 		
-		ArrayList<FoodItem> items = new ArrayList<FoodItem>();
+		ArrayList<FoodStock> items = new ArrayList<FoodStock>();
 		
 		for(String line : lines) {
 			
