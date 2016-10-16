@@ -268,6 +268,52 @@ public final class SQLiteJDBC
         }
     }
 
+    public static String foodItemsToCSV(){
+        Connection c = null;
+        StringBuilder csv = new StringBuilder();
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("SELECT name, restock_limit, popularity FROM food_items");
+            ResultSet rs = s.executeQuery();
+            while(rs.next()){
+                csv.append(rs.getString(1)).append(',').append(rs.getInt(2)).append(',').append(rs.getInt(3)).append('\n');
+            }
+            s.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+
+        return csv.toString();
+    }
+
+    public static String foodStockToCSV(){
+        Connection c = null;
+        StringBuilder csv = new StringBuilder();
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection("jdbc:sqlite:leos.db");
+            c.setAutoCommit(false);
+            PreparedStatement s;
+            s = c.prepareStatement("SELECT name, batch_number, stock, exp FROM food_stock");
+            ResultSet rs = s.executeQuery();
+            while(rs.next()){
+                csv.append(rs.getString(1)).append(',').append(rs.getInt(2)).append(',').append(rs.getInt(3)).append(',').append(rs.getInt(4)).append('\n');
+            }
+            s.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+            System.exit(0);
+        }
+
+        return csv.toString();
+    }
+
     private static java.sql.Timestamp toSQLDate(java.util.Date d){
         if(d == null)
             return null;
