@@ -1,11 +1,18 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainFrame extends JFrame {
-
+	
+	private JPanel stockPanel;
 	private JPanel contentPane;
 	private JTable stockTable;
+	private JComboBox<String> sortByCombo;
+	private DefaultTableModel stockTableModel;
 
 	/**
 	 * Launch the application.
@@ -27,6 +34,7 @@ public class MainFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public MainFrame() {
+		setTitle("Squirtle Squad Leos Management System");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 692, 515);
 		
@@ -38,6 +46,19 @@ public class MainFrame extends JFrame {
 		
 		JMenuItem mntmOpen = new JMenuItem("Open");
 		mnFile.add(mntmOpen);
+		
+		JMenu mnTesting = new JMenu("Testing");
+		menuBar.add(mnTesting);
+		
+		JMenuItem testRefreshStock = new JMenuItem("Refresh Stock");
+		testRefreshStock.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				UpdateStock();
+				System.out.println("BRAP");
+			}
+		});
+		mnTesting.add(testRefreshStock);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -46,7 +67,7 @@ public class MainFrame extends JFrame {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tabbedPane, "name_1040126215182");
 		
-		JPanel stockPanel = new JPanel();
+		stockPanel = new JPanel();
 		stockPanel.setBackground(Color.WHITE);
 		tabbedPane.addTab("Stock", null, stockPanel, null);
 		stockPanel.setLayout(new BorderLayout(0, 0));
@@ -55,18 +76,18 @@ public class MainFrame extends JFrame {
 		stockPanel.add(sotckSidePanel, BorderLayout.EAST);
 		GridBagLayout gbl_sotckSidePanel = new GridBagLayout();
 		gbl_sotckSidePanel.columnWidths = new int[]{73, 0};
-		gbl_sotckSidePanel.rowHeights = new int[]{23, 0, 0, 0, 0};
+		gbl_sotckSidePanel.rowHeights = new int[]{23, 0, 0, 0, 0, 0};
 		gbl_sotckSidePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_sotckSidePanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_sotckSidePanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		sotckSidePanel.setLayout(gbl_sotckSidePanel);
 		
-		JCheckBox expandedViewCheck = new JCheckBox("Expanded View");
-		GridBagConstraints gbc_expandedViewCheck = new GridBagConstraints();
-		gbc_expandedViewCheck.anchor = GridBagConstraints.NORTHWEST;
-		gbc_expandedViewCheck.insets = new Insets(0, 0, 5, 0);
-		gbc_expandedViewCheck.gridx = 0;
-		gbc_expandedViewCheck.gridy = 0;
-		sotckSidePanel.add(expandedViewCheck, gbc_expandedViewCheck);
+		JCheckBox expiryViewCheck = new JCheckBox("Expiry View");
+		GridBagConstraints gbc_expiryViewCheck = new GridBagConstraints();
+		gbc_expiryViewCheck.anchor = GridBagConstraints.NORTHWEST;
+		gbc_expiryViewCheck.insets = new Insets(0, 0, 5, 0);
+		gbc_expiryViewCheck.gridx = 0;
+		gbc_expiryViewCheck.gridy = 0;
+		sotckSidePanel.add(expiryViewCheck, gbc_expiryViewCheck);
 		
 		JButton setLimitButton = new JButton("Set Limit");
 		GridBagConstraints gbc_setLimitButton = new GridBagConstraints();
@@ -85,19 +106,56 @@ public class MainFrame extends JFrame {
 		gbc_sortByLabel.gridy = 2;
 		sotckSidePanel.add(sortByLabel, gbc_sortByLabel);
 		
-		JList sortByList = new JList();
-		GridBagConstraints gbc_sortByList = new GridBagConstraints();
-		gbc_sortByList.anchor = GridBagConstraints.NORTH;
-		gbc_sortByList.fill = GridBagConstraints.HORIZONTAL;
-		gbc_sortByList.gridx = 0;
-		gbc_sortByList.gridy = 3;
-		sotckSidePanel.add(sortByList, gbc_sortByList);
+		sortByCombo = new JComboBox<String>();
+		sortByCombo.addItem("Test1");
+		GridBagConstraints gbc_sortByCombo = new GridBagConstraints();
+		gbc_sortByCombo.insets = new Insets(0, 0, 5, 0);
+		gbc_sortByCombo.fill = GridBagConstraints.HORIZONTAL;
+		gbc_sortByCombo.gridx = 0;
+		gbc_sortByCombo.gridy = 3;
+		sotckSidePanel.add(sortByCombo, gbc_sortByCombo);
 		
-		stockTable = new JTable();
-		stockPanel.add(stockTable, BorderLayout.CENTER);
+		JButton btnTest = new JButton("Test");
+		btnTest.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("Test button clicked");
+				UpdateStock();
+			}
+		});
+		GridBagConstraints gbc_btnTest = new GridBagConstraints();
+		gbc_btnTest.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnTest.gridx = 0;
+		gbc_btnTest.gridy = 4;
+		sotckSidePanel.add(btnTest, gbc_btnTest);
+		
+		stockTableModel = new DefaultTableModel();
+		stockTableModel.addColumn("Name");
+		stockTableModel.addRow(new Object[]{"test"});
+		
+		stockTable = new JTable(stockTableModel);
+		JScrollPane stockScrollPanel = new JScrollPane(stockTable);
+		stockPanel.add(stockScrollPanel, BorderLayout.CENTER);
+		
 		
 		JPanel workerPanel = new JPanel();
 		workerPanel.setBackground(Color.WHITE);
 		tabbedPane.addTab("Worker", null, workerPanel, null);
+	}
+	
+	/**
+	 * Updates the stock panel to show new table and combo box.
+	 */
+	public void UpdateStock()
+	{
+		//Combo Box
+		sortByCombo.removeAllItems();
+		sortByCombo.addItem("Test");
+		
+		//Table
+		stockTableModel.setColumnCount(0);
+		stockTableModel.addColumn("UPDATE TEST");
+		
+		System.out.println("update stock called");
 	}
 }
