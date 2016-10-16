@@ -47,6 +47,11 @@ public class MainFrame extends JFrame {
 		return stockTable;
 	}
 	
+	public boolean getStockSelected()
+	{
+		return expiryViewCheck.isSelected();
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -121,7 +126,7 @@ public class MainFrame extends JFrame {
 		gbc_sortByLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_sortByLabel.gridx = 0;
 		gbc_sortByLabel.gridy = 2;
-		sotckSidePanel.add(sortByLabel, gbc_sortByLabel);
+		//sotckSidePanel.add(sortByLabel, gbc_sortByLabel);
 		
 		sortByCombo = new JComboBox<String>();
 		GridBagConstraints gbc_sortByCombo = new GridBagConstraints();
@@ -129,7 +134,7 @@ public class MainFrame extends JFrame {
 		gbc_sortByCombo.fill = GridBagConstraints.HORIZONTAL;
 		gbc_sortByCombo.gridx = 0;
 		gbc_sortByCombo.gridy = 3;
-		sotckSidePanel.add(sortByCombo, gbc_sortByCombo);
+		//sotckSidePanel.add(sortByCombo, gbc_sortByCombo);
 		
 		inventoryStock = SQLiteJDBC.selectFoodStock();
 		inventoryNoStock = SQLiteJDBC.selectFoodItem();
@@ -138,8 +143,6 @@ public class MainFrame extends JFrame {
 		stockTable = new JTable(stockTableModel);
 		JScrollPane stockScrollPanel = new JScrollPane(stockTable);
 		stockPanel.add(stockScrollPanel, BorderLayout.CENTER);
-		
-		UpdateStock();
 		
 		JPanel workerPanel = new JPanel();
 		workerPanel.setBackground(Color.WHITE);
@@ -151,7 +154,7 @@ public class MainFrame extends JFrame {
 		JScrollPane workerScrollPanel = new JScrollPane(workerTable);
 		workerPanel.add(workerScrollPanel, BorderLayout.CENTER);
 		
-		workerScheduleTableModel = new DefaultTableModel(new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}, 0);
+		workerScheduleTableModel = new DefaultTableModel(new String[]{"Time", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}, 0);
 		JPanel workerSchedulePanel = new JPanel();
 		tabbedPane.addTab("Schedule", null, workerSchedulePanel, null);
 		workerSchedulePanel.setLayout(new BorderLayout(0, 0));
@@ -161,6 +164,9 @@ public class MainFrame extends JFrame {
 		
 		workerScheduleTable = new JTable(workerScheduleTableModel);
 		workerScheduleScrollPanel.setViewportView(workerScheduleTable);
+		
+		UpdateStock();
+		setEmployeeTables();
 	}
 	
 	/**
@@ -172,9 +178,10 @@ public class MainFrame extends JFrame {
 		stockTableModel.setColumnCount(0);
 		stockTableModel.setRowCount(0);
 		String[] columns = columnHeadersExp;
+		inventoryStock = SQLiteJDBC.selectFoodStock();
+		inventoryNoStock = SQLiteJDBC.selectFoodItem();
 		if(expiryViewCheck.isSelected()) {
 			//Activate column
-			inventoryStock = SQLiteJDBC.selectFoodStock();
 			stockTableModel.setColumnIdentifiers(columnHeadersExp);
 			for(int i = 0; i < inventoryStock.size(); i++) {
 				stockTableModel.addRow(new String[]{inventoryStock.get(i).getName(), inventoryStock.get(i).getStock().toString(), inventoryStock.get(i).getPopularity().toString(), inventoryStock.get(i).getRestockLimit().toString(), inventoryStock.get(i).getBatchNumber().toString(), inventoryStock.get(i).getExpiryDate().toString()});
@@ -182,9 +189,12 @@ public class MainFrame extends JFrame {
 		} 
 		else {
 			//Deactivate column
-			inventoryNoStock = SQLiteJDBC.selectFoodItem();
 			stockTableModel.setColumnIdentifiers(columnHeadersNoExp);
 			for(int i = 0; i < inventoryNoStock.size(); i++) {
+				if(inventoryNoStock.get(i).getRestockLimit() > inventoryNoStock.get(i).getStock())
+				{
+					limitWarning(inventoryNoStock.get(i).getName());
+				}
 				stockTableModel.addRow(new String[]{inventoryNoStock.get(i).getName(), inventoryNoStock.get(i).getStock().toString(), inventoryNoStock.get(i).getPopularity().toString(), inventoryNoStock.get(i).getRestockLimit().toString()});
 			}
 			columns = columnHeadersNoExp;
@@ -210,50 +220,77 @@ public class MainFrame extends JFrame {
 		//Schedule
 		String[][] schedule = ScheduleGenerator.generateSchedule(workerList);
 		
+		String[] scheduleRow = new String[7];
+		scheduleRow[0] = "8:30-9:30";
 		for(int i = 0; i < 6; i++)
 		{
-			workerScheduleTableModel.addRow(new String[]{"8:30-9:30", schedule[i][0]});
+			scheduleRow[i + 1] = schedule[i][0];
 		}
+		workerScheduleTableModel.addRow(scheduleRow);
 		
+		scheduleRow = new String[7];
+		scheduleRow[0] = "9:30-10:30";
 		for(int i = 0; i < 6; i++)
 		{
-			workerScheduleTableModel.addRow(new String[]{"9:30-10:30",schedule[i][1]});
+			scheduleRow[i + 1] = schedule[i][1];
 		}
+		workerScheduleTableModel.addRow(scheduleRow);
 		
+		scheduleRow = new String[7];
+		scheduleRow[0] = "10:30-11:30";
 		for(int i = 0; i < 6; i++)
 		{
-			workerScheduleTableModel.addRow(new String[]{"10:30-11:30",schedule[i][2]});
+			scheduleRow[i + 1] = schedule[i][2];
 		}
+		workerScheduleTableModel.addRow(scheduleRow);
 		
+		scheduleRow = new String[7];
+		scheduleRow[0] = "11:30-12:30";
 		for(int i = 0; i < 6; i++)
 		{
-			workerScheduleTableModel.addRow(new String[]{"11:30-12:30",schedule[i][3]});
+			scheduleRow[i + 1] = schedule[i][3];
 		}
+		workerScheduleTableModel.addRow(scheduleRow);
 		
+		scheduleRow = new String[7];
+		scheduleRow[0] = "12:30-1:30";
 		for(int i = 0; i < 6; i++)
 		{
-			workerScheduleTableModel.addRow(new String[]{"12:30-1:30",schedule[i][4]});
+			scheduleRow[i + 1] = schedule[i][4];
 		}
+		workerScheduleTableModel.addRow(scheduleRow);
 		
+		scheduleRow = new String[7];
+		scheduleRow[0] = "1:30-2:30";
 		for(int i = 0; i < 6; i++)
 		{
-			workerScheduleTableModel.addRow(new String[]{"1:30-2:30",schedule[i][5]});
+			scheduleRow[i + 1] = schedule[i][5];
 		}
+		workerScheduleTableModel.addRow(scheduleRow);
 		
+		scheduleRow = new String[7];
+		scheduleRow[0] = "2:30-3:30";
 		for(int i = 0; i < 6; i++)
 		{
-			workerScheduleTableModel.addRow(new String[]{"3:30-4:30",schedule[i][6]});
+			scheduleRow[i + 1] = schedule[i][6];
 		}
+		workerScheduleTableModel.addRow(scheduleRow);
 		
+		scheduleRow = new String[7];
+		scheduleRow[0] = "3:30-4:30";
 		for(int i = 0; i < 6; i++)
 		{
-			workerScheduleTableModel.addRow(new String[]{"5:30-6:30",schedule[i][7]});
+			scheduleRow[i + 1] = schedule[i][7];
 		}
+		workerScheduleTableModel.addRow(scheduleRow);
 		
+		scheduleRow = new String[7];
+		scheduleRow[0] = "4:30-5:30";
 		for(int i = 0; i < 6; i++)
 		{
-			workerScheduleTableModel.addRow(new String[]{"7:30-8:30",schedule[i][8]});
+			scheduleRow[i + 1] = schedule[i][8];
 		}
+		workerScheduleTableModel.addRow(scheduleRow);
 		
 		//TODO: Add overnights
 	}
@@ -277,5 +314,11 @@ public class MainFrame extends JFrame {
 	public void sortStock()
 	{
 		
+	}
+
+	public void limitWarning(String name)
+	{
+		EmailerSender.sendNotification(name);
+		JOptionPane.showMessageDialog(this, name + " is low on stock, consider buying more.");
 	}
 }
