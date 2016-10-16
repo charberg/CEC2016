@@ -120,6 +120,16 @@ public class MainFrame extends JFrame {
 		gbc_setLimitButton.gridy = 1;
 		sotckSidePanel.add(setLimitButton, gbc_setLimitButton);
 		
+		JButton exportCsvButton = new JButton("Export To CSV");
+		exportCsvButton.setActionCommand("exportcsv");
+		exportCsvButton.addActionListener(listener);
+		GridBagConstraints gbc_exportCsvButton = new GridBagConstraints();
+		gbc_exportCsvButton.fill = GridBagConstraints.HORIZONTAL;
+		gbc_exportCsvButton.insets = new Insets(0, 0, 5, 0);
+		gbc_exportCsvButton.gridx = 0;
+		gbc_exportCsvButton.gridy = 2;
+		sotckSidePanel.add(exportCsvButton, gbc_exportCsvButton);
+		
 		JLabel sortByLabel = new JLabel("Sort By: ");
 		GridBagConstraints gbc_sortByLabel = new GridBagConstraints();
 		gbc_sortByLabel.anchor = GridBagConstraints.NORTH;

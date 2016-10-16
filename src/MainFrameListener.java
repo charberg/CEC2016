@@ -1,5 +1,8 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -52,6 +55,30 @@ public class MainFrameListener implements ActionListener{
 				{
 					frame.setRestock(value);
 				}
+				break;
+			case "exportcsv":
+				String content = "";
+				if(frame.getStockSelected())
+				{
+					content = SQLiteJDBC.foodStockToCSV();
+				}
+				else
+				{
+					content = SQLiteJDBC.foodItemsToCSV();
+				}
+				PrintWriter writer;
+				try {
+					writer = new PrintWriter("food.csv", "UTF-8");
+					writer.print(content);
+					writer.close();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				break;
 		}
 	}
