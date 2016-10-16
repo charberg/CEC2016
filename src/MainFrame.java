@@ -1,30 +1,6 @@
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.CardLayout;
-import javax.swing.JMenuBar;
-import javax.swing.JTabbedPane;
-import java.awt.GridLayout;
-import javax.swing.BoxLayout;
-import java.awt.Color;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JTable;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.FlowLayout;
-import net.miginfocom.swing.MigLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JList;
-import javax.swing.JTextPane;
-import javax.swing.JLabel;
+import java.awt.*;
 
 public class MainFrame extends JFrame {
 
