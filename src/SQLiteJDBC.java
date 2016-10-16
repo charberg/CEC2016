@@ -35,7 +35,7 @@ public final class SQLiteJDBC
             PreparedStatement s;
             s = c.prepareStatement("UPDATE food_stock SET stock = ?, exp = ? WHERE name = ? AND batch_number = ?");
             s.setInt(1, foodStock.getStock());
-            s.setDate(2, toSQLDate(foodStock.getExpiryDate()));
+            s.setTimestamp(2, toSQLDate(foodStock.getExpiryDate()));
             s.setString(3, foodStock.getName());
             s.setInt(4, foodStock.getBatchNumber());
             s.executeUpdate();
@@ -68,7 +68,7 @@ public final class SQLiteJDBC
                 foodStockStatement.setString(1, foodStock.getName());
                 foodStockStatement.setInt(2, foodStock.getBatchNumber());
                 foodStockStatement.setInt(3, foodStock.getStock());
-                foodStockStatement.setDate(4, toSQLDate(foodStock.getExpiryDate()));
+                foodStockStatement.setTimestamp(4, toSQLDate(foodStock.getExpiryDate()));
                 foodStockStatement.executeUpdate();
             }
             foodItemStatement.close();
@@ -113,7 +113,7 @@ public final class SQLiteJDBC
             s.setString(1, foodStock.getName());
             s.setInt(2, foodStock.getBatchNumber());
             s.setInt(3, foodStock.getStock());
-            s.setDate(4, toSQLDate(foodStock.getExpiryDate()));
+            s.setTimestamp(4, toSQLDate(foodStock.getExpiryDate()));
             s.executeUpdate();
             s.close();
             c.commit();
@@ -183,18 +183,18 @@ public final class SQLiteJDBC
                     "end_wednesday, start_thursday, end_thursday, start_friday, end_friday, start_saturday, end_saturday, overnight)   " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             s.setString(1, employee.getName());
-            s.setDate(2, toSQLDate(employee.startTimes.get("monday")));
-            s.setDate(3, toSQLDate(employee.endTimes.get("monday")));
-            s.setDate(4, toSQLDate(employee.startTimes.get("tuesday")));
-            s.setDate(5, toSQLDate(employee.endTimes.get("tuesday")));
-            s.setDate(6, toSQLDate(employee.startTimes.get("wednesday")));
-            s.setDate(7, toSQLDate(employee.endTimes.get("wednesday")));
-            s.setDate(8, toSQLDate(employee.startTimes.get("thursday")));
-            s.setDate(9, toSQLDate(employee.endTimes.get("thursday")));
-            s.setDate(10, toSQLDate(employee.startTimes.get("friday")));
-            s.setDate(11, toSQLDate(employee.endTimes.get("friday")));
-            s.setDate(12, toSQLDate(employee.startTimes.get("saturday")));
-            s.setDate(13, toSQLDate(employee.endTimes.get("saturday")));
+            s.setTimestamp(2, toSQLDate(employee.startTimes.get("monday")));
+            s.setTimestamp(3, toSQLDate(employee.endTimes.get("monday")));
+            s.setTimestamp(4, toSQLDate(employee.startTimes.get("tuesday")));
+            s.setTimestamp(5, toSQLDate(employee.endTimes.get("tuesday")));
+            s.setTimestamp(6, toSQLDate(employee.startTimes.get("wednesday")));
+            s.setTimestamp(7, toSQLDate(employee.endTimes.get("wednesday")));
+            s.setTimestamp(8, toSQLDate(employee.startTimes.get("thursday")));
+            s.setTimestamp(9, toSQLDate(employee.endTimes.get("thursday")));
+            s.setTimestamp(10, toSQLDate(employee.startTimes.get("friday")));
+            s.setTimestamp(11, toSQLDate(employee.endTimes.get("friday")));
+            s.setTimestamp(12, toSQLDate(employee.startTimes.get("saturday")));
+            s.setTimestamp(13, toSQLDate(employee.endTimes.get("saturday")));
             s.setBoolean(14, employee.getOvernight());
             s.executeUpdate();
             s.close();
@@ -245,18 +245,18 @@ public final class SQLiteJDBC
                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             for(Employee employee : employees){
                 s.setString(1, employee.getName());
-                s.setDate(2, toSQLDate(employee.startTimes.get("monday")));
-                s.setDate(3, toSQLDate(employee.endTimes.get("monday")));
-                s.setDate(4, toSQLDate(employee.startTimes.get("tuesday")));
-                s.setDate(5, toSQLDate(employee.endTimes.get("tuesday")));
-                s.setDate(6, toSQLDate(employee.startTimes.get("wednesday")));
-                s.setDate(7, toSQLDate(employee.endTimes.get("wednesday")));
-                s.setDate(8, toSQLDate(employee.startTimes.get("thursday")));
-                s.setDate(9, toSQLDate(employee.endTimes.get("thursday")));
-                s.setDate(10, toSQLDate(employee.startTimes.get("friday")));
-                s.setDate(11, toSQLDate(employee.endTimes.get("friday")));
-                s.setDate(12, toSQLDate(employee.startTimes.get("saturday")));
-                s.setDate(13, toSQLDate(employee.endTimes.get("saturday")));
+                s.setTimestamp(2, toSQLDate(employee.startTimes.get("monday")));
+                s.setTimestamp(3, toSQLDate(employee.endTimes.get("monday")));
+                s.setTimestamp(4, toSQLDate(employee.startTimes.get("tuesday")));
+                s.setTimestamp(5, toSQLDate(employee.endTimes.get("tuesday")));
+                s.setTimestamp(6, toSQLDate(employee.startTimes.get("wednesday")));
+                s.setTimestamp(7, toSQLDate(employee.endTimes.get("wednesday")));
+                s.setTimestamp(8, toSQLDate(employee.startTimes.get("thursday")));
+                s.setTimestamp(9, toSQLDate(employee.endTimes.get("thursday")));
+                s.setTimestamp(10, toSQLDate(employee.startTimes.get("friday")));
+                s.setTimestamp(11, toSQLDate(employee.endTimes.get("friday")));
+                s.setTimestamp(12, toSQLDate(employee.startTimes.get("saturday")));
+                s.setTimestamp(13, toSQLDate(employee.endTimes.get("saturday")));
                 s.setBoolean(14, employee.getOvernight());
                 s.executeUpdate();
             }
@@ -268,9 +268,9 @@ public final class SQLiteJDBC
         }
     }
 
-    private static java.sql.Date toSQLDate(java.util.Date d){
+    private static java.sql.Timestamp toSQLDate(java.util.Date d){
         if(d == null)
             return null;
-        return new java.sql.Date(d.getTime());
+        return new java.sql.Timestamp(d.getTime());
     }
 }
