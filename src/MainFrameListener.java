@@ -25,6 +25,10 @@ public class MainFrameListener implements ActionListener{
 				System.out.println("open file");
 				break;
 			case "setrestock":
+				if(frame.getStockTable().getSelectedRow() == -1)
+				{
+					break;
+				}
 				String value = JOptionPane.showInputDialog(frame, "Input the new value:","Restock Limit", JOptionPane.PLAIN_MESSAGE);
 				if(value != null && !value.isEmpty())
 				{
